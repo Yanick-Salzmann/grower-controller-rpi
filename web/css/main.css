@@ -1,0 +1,16 @@
+.case-fan {
+    height: 118px;
+}
+
+.power-icon {
+    font-size: 118px;
+    cursor: pointer;
+}
+
+.power-icon.power-off {
+    color: red;
+}
+
+.power-icon.power-on {
+    color: lightgreen;
+}

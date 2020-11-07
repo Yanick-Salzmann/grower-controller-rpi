@@ -1,0 +1,14 @@
+Fans
+--
+- Case Inlet
+  - gpio 19 -> PWM
+  - gpio 26 -> `LOW`
+- Electronics Inlet
+  - gpio 20 -> `HIGH`
+  - gpio 16 -> PWM
+- Case Outlet
+  - gpio 18 -> green
+  - gpio 23 -> blue
+- Humidifier
+  - gpio 24 -> orange
+  - gpio 25 -> red

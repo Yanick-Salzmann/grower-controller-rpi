@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grower Supervisor</title>
+
+    <link rel="stylesheet" href="lib/bootstrap/bootstrap.css"/>
+    <link rel="stylesheet" href="lib/video/video-js-7.8.4.css"/>
+    <link rel="stylesheet" href="lib/video/video-js-7.8.4-forest.css"/>
+
+    <link rel="stylesheet" href="lib/fontawesome/css/all.css">
+
+    <link rel="stylesheet" href="css/main.css"/>
+
+    <script src="lib/jquery/jquery-3.5.1.js"></script>
+    <script src="lib/popper/popper-1.16.1.js"></script>
+    <script src="lib/bootstrap/bootstrap-4.5.2.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/camera_frame.js"></script>
+    <script src="js/video_stream.js"></script>
+    <script src="js/yuv_wrapper.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row mt-3">
+        <h1>Chili Grower Supervisor</h1>
+    </div>
+    <div class="row mt-5 align-items-center">
+        <div class="col-md-2">
+            <i class="fa fa-power-off power-icon power-off" id="psu-switch-icon"></i>
+        </div>
+        <div class="col-md-10 align-items-center">
+            <h3>Power Supply: Off</h3>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-2">
+            <img src="images/case_fan.svg" alt="Case fan artwork" class="case-fan">
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <h4>Cooling Fan</h4>
+            </div>
+            <div class="row form-inline">
+                <div>
+                    <label for="cooler-fan-speed" class="justify-content-start">Target Speed</label>
+                    <input type="range" class="custom-range" id="cooler-fan-speed" min="0" max="1024" step="1">
+                </div>
+                <div class="form-group ml-2">
+                    <button type="button" class="btn btn-primary">Auto</button>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <h5 id="cooler-fan-rpm">Current RPM:&nbsp;1200</h5>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <h4>Intake Fan</h4>
+            </div>
+            <div class="row form-inline">
+                <div>
+                    <label for="intake-fan-speed" class="justify-content-start">Target Speed</label>
+                    <input type="range" class="custom-range" id="intake-fan-speed" min="0" max="1024" step="1">
+                </div>
+                <div class="form-group ml-2">
+                    <button type="button" class="btn btn-primary">Auto</button>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <h5>Current RPM:&nbsp;1200</h5>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <h4>Humidifier Fan</h4>
+            </div>
+            <div class="row form-inline">
+                <div>
+                    <label for="humidifier-fan-speed" class="justify-content-start">Target Speed</label>
+                    <input type="range" class="custom-range" id="humidifier-fan-speed" min="0" max="1024" step="1">
+                </div>
+                <div class="form-group ml-2">
+                    <button type="button" class="btn btn-primary">Auto</button>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <h5>Current RPM:&nbsp;1200</h5>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <h1>Video Preview</h1>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <canvas id="camera-player" width="608" height="480">
+            </canvas>
+        </div>
+    </div>
+</div>
+</body>
+</html>
