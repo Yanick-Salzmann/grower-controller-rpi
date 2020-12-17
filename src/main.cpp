@@ -14,6 +14,8 @@
 #include "ui/gl/graphics_device.hpp"
 #include <tslib.h>
 #include "ui/ui_manager.hpp"
+#include "peripheral/serial_interface.hpp"
+#include "utils/string.hpp"
 
 namespace grower {
     int main() {
@@ -39,25 +41,26 @@ namespace grower {
             s_video_mgr->remove_frame_callback(key);
         });
 
-        http::http_server web_server{8081, std::make_shared<grower::context>()};
+        auto app_context = std::make_shared<grower::context>();
+        app_context->setup();
+
+        http::http_server web_server{8088, app_context};
 
         s_graphics_device->initialize();
 
-        s_ui_mgr->initialize();
+        s_ui_mgr->initialize(app_context);
 
         while (!s_ui_mgr->should_quit()) {
+            if (!s_ui_mgr->is_display_on()) {
+                s_ui_mgr->update_display();
+                std::this_thread::sleep_for(std::chrono::milliseconds{500});
+                continue;
+            }
+
             s_graphics_device->begin_frame();
             s_ui_mgr->render();
             s_graphics_device->end_frame();
         }
-
-/*      wiring::wiring_context context{};
-        auto app_context = std::make_shared<grower::context>();
-        app_context->setup();
-
-        log->info("System ready");
-
-        http::http_server web_server{8081, app_context};*/
 
         return 0;
     }

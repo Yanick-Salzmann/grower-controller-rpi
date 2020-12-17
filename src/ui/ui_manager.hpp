@@ -11,6 +11,7 @@
 #include "touch_input.hpp"
 #include "views/view.hpp"
 #include "views/main_view.hpp"
+#include "context.hpp"
 
 namespace grower::ui {
     class ui_manager : public utils::singleton<ui_manager> {
@@ -33,6 +34,8 @@ namespace grower::ui {
 
         std::shared_ptr<views::main_view> _main_view{};
 
+        context_ptr _context;
+
         void update_fps();
         void update_temperature();
 
@@ -40,7 +43,7 @@ namespace grower::ui {
         void turn_on_display();
 
     public:
-        void initialize();
+        void initialize(context_ptr context);
 
         [[nodiscard]] bool should_quit() const {
             return false;
@@ -49,6 +52,12 @@ namespace grower::ui {
         void render();
 
         void handle_input_event(const input_event& event);
+
+        [[nodiscard]] bool is_display_on() const {
+            return _is_display_on;
+        }
+
+        void update_display();
 
         static const std::string default_font_name;
         static const std::string font_awesome_name;

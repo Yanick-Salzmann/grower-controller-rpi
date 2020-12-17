@@ -39,6 +39,8 @@ namespace grower::ui {
 
         tsdev *_ts_dev = nullptr;
 
+        bool _has_read_data = false;
+
         void update_slot(uint32_t slot, int32_t x, int32_t y, bool pressed);
 
         void process_sample(const ts_sample_mt* samples);

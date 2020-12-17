@@ -16,7 +16,7 @@ namespace grower::peripheral {
     }
 
     case_fan &case_fan::speed(std::size_t new_speed) {
-        new_speed = std::min(std::max(new_speed, 0_sz), 1024_sz);
+        new_speed = std::min(std::max(new_speed, 0_sz), 255_sz);
         _pwm_pin.pwm_value(static_cast<int>(new_speed));
         return *this;
     }

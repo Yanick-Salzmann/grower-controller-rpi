@@ -54,6 +54,8 @@ namespace grower::ui::elements {
 
         void render() override;
     };
+
+    typedef std::shared_ptr<font_awesome_image> font_awesome_image_ptr;
 }
 
 #endif //GROWER_CONTROLLER_RPI_FONT_AWESOME_IMAGE_HPP

@@ -10,7 +10,7 @@ namespace grower::video {
 
         _camera_stream = std::make_shared<raw_camera_stream>();
         try {
-            _camera_stream->initialize_camera(camera_configuration(600, 480, 22, 60));
+            _camera_stream->initialize_camera(camera_configuration(600, 480, 22, 30));
         } catch (std::exception &e) {
             log->warn("Camera unavailable, images wont be available");
             return;

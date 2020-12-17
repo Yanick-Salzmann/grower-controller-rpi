@@ -55,6 +55,12 @@ namespace grower::ui::gl {
         } \
         use()
 
+        UNIFORM(float, float) {
+            PROLOG;
+            glUniform1f(index, value);
+            return *this;
+        }
+
         UNIFORM(glm::vec4, vec4) {
             PROLOG;
             glUniform4fv(index, 1, glm::value_ptr(value));

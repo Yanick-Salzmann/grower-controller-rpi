@@ -100,7 +100,13 @@ namespace grower::net {
 
         _is_upgraded = true;
         send_upgrade_response(itr->second);
-        _ws_server.lock()->handle_session(_path, shared_from_this());
+        auto ws_server = _ws_server.lock();
+        if(!ws_server) {
+            shutdown();
+            return;
+        }
+
+        ws_server->handle_session(_path, shared_from_this());
 
         maybe_read_websocket_data();
     }

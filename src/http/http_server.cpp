@@ -15,7 +15,7 @@ namespace grower::http {
             const auto status = res.status;
             const auto reason = res.reason;
             const auto body_size = res.body.size();
-            log->debug("{} {} --> {} {} ({} bytes body)", method, url, status, reason, body_size);
+            //log->debug("{} {} --> {} {} ({} bytes body)", method, url, status, reason, body_size);
         });
 
         _server_thread = std::thread{
@@ -36,10 +36,19 @@ namespace grower::http {
         _server.Get("/fans", [this](const auto &req, auto &resp) { get_fan_speed(req, resp); });
         _server.Put("/fans", [this](const auto &req, auto &resp) { put_fan_speed(req, resp); });
 
-        _server.Get("/psu", [this](const auto &req, auto &resp) { get_psu_state(req, resp); });
-        _server.Put("/psu", [this](const auto &req, auto &resp) { put_psu_state(req, resp); });
-
         _server.Get("/stop", [this](const auto &, auto &resp) { stop_application(resp); });
+
+        _server.Get("/current", [this](const auto &req, auto &resp) { update_current(req, resp); });
+        _server.Get("/current/lamp", [this](const auto &req, auto &resp) { get_flower_current(req, resp); });
+        _server.Get("/current/rpi", [this](const auto &req, auto &resp) { get_rpi_current(req, resp); });
+
+        _server.Get("/state/flower", [this](const auto &req, auto &resp) { get_state_flowering(req, resp); });
+        _server.Get("/state/germination", [this](const auto &req, auto &resp) { get_state_germ(req, resp); });
+        _server.Get("/state/illumination", [this](const auto &req, auto &resp) { get_state_illumination(req, resp); });
+
+        _server.Post("/state/flower", [this](const auto& req, auto& resp) { put_state_flowering(req, resp); });
+        _server.Post("/state/germination", [this](const auto& req, auto& resp) { put_state_germination(req, resp); });
+        _server.Post("/state/illumination", [this](const auto& req, auto& resp) { put_state_illumination(req, resp); });
     }
 
     void http_server::get_fan_speed(const httplib::Request &req, httplib::Response &resp) {
@@ -104,42 +113,77 @@ namespace grower::http {
         resp.body = body;
     }
 
-    void http_server::get_psu_state(const httplib::Request &req, httplib::Response &resp) {
-        nlohmann::json ret{};
-        ret["enabled"] = false; //_context->psu()->state();
-        resp.set_content(ret.dump(), "application/json;charset=UTF-8");
+    void http_server::update_current(const httplib::Request &req, httplib::Response &resp) {
+        if (req.has_param("lamp")) {
+            log->info("Lamp current: {}", req.params.find("lamp")->second);
+        }
+
         resp.status = 200;
         resp.reason = "OK";
     }
 
-    void http_server::put_psu_state(const httplib::Request &req, httplib::Response &resp) {
-        nlohmann::json doc{};
-        try {
-            doc = nlohmann::json::parse(req.body);
-        } catch (std::exception &e) {
-            log->warn("Could not parse incoming request: {}", e.what());
-            resp.status = 400;
-            resp.reason = "Could not parse incoming JSON";
-            return;
-        }
-
-        const auto itr = doc.find("enabled");
-        if (itr == doc.end()) {
-            log->warn("Received request for PSU without enable/disable flag");
-            resp.status = 400;
-            resp.reason = "No 'enabled' field in payload";
-            return;
-        }
-
-        const auto enable = itr.value().get<bool>();
-        if (enable) {
-            _context->psu()->activate();
-        } else {
-            _context->psu()->deactivate();
-        }
-
+    void http_server::get_flower_current(const httplib::Request &req, httplib::Response &resp) {
+        const auto current = _context->lamp_current();
+        resp.set_content(fmt::format("{}", current), "text/plain");
         resp.status = 200;
         resp.reason = "OK";
-        resp.set_content(R"({"status": "OK"})", "text/plain");
+    }
+
+    void http_server::get_rpi_current(const httplib::Request &req, httplib::Response &resp) {
+        const auto current = _context->rpi_current();
+        resp.set_content(fmt::format("{}", current), "text/plain");
+        resp.status = 200;
+        resp.reason = "OK";
+    }
+
+    void http_server::get_state_flowering(const httplib::Request &req, httplib::Response &resp) {
+        resp.set_content(_context->flower_lamp()->state() ? "1" : "0", "text/plain");
+        resp.status = 200;
+        resp.reason = "OK";
+    }
+
+    void http_server::get_state_germ(const httplib::Request &req, httplib::Response &resp) {
+        resp.set_content(_context->germ_lamp()->state() ? "1" : "0", "text/plain");
+        resp.status = 200;
+        resp.reason = "OK";
+    }
+
+    void http_server::get_state_illumination(const httplib::Request &res, httplib::Response &resp) {
+        resp.set_content(_context->cam_light()->state() ? "1" : "0", "text/plain");
+        resp.status = 200;
+        resp.reason = "OK";
+    }
+
+    void http_server::put_state_flowering(const httplib::Request &req, httplib::Response &resp) {
+        update_relay_state(_context->flower_lamp(), req, resp);
+    }
+
+    void http_server::put_state_germination(const httplib::Request &req, httplib::Response &resp) {
+        update_relay_state(_context->germ_lamp(), req, resp);
+    }
+
+    void http_server::put_state_illumination(const httplib::Request &req, httplib::Response &resp) {
+        update_relay_state(_context->cam_light(), req, resp);
+    }
+
+    void http_server::update_relay_state(peripheral::relay_control_ptr relay, const httplib::Request &req, httplib::Response& resp) {
+        nlohmann::json req_body{};
+        try {
+            req_body = nlohmann::json::parse(req.body);
+        } catch (nlohmann::json::parse_error &e) {
+            return client_error(resp, "Invalid JSON body", e.what());
+        }
+
+        if(req_body.find("enabled") == req_body.end()) {
+            return client_error(resp, "Missing parameter 'enabled' in request", "Missing parameter");
+        }
+
+        try {
+            const auto enabled = req_body["enabled"].get<bool>();
+            std::cout << "Putting relay to " << (enabled ? "enabled" : "disabled") << " status" << std::endl;
+            relay->state(enabled);
+        } catch (std::exception& ex) {
+            return client_error(resp, "Error unwrapping request", ex.what());
+        }
     }
 }

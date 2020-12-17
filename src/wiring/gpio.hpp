@@ -15,11 +15,10 @@ namespace grower::wiring {
     class gpio_pin {
         gpio_mode  _mode = gpio_mode::input;
         uint32_t _pin_index = 0;
+        int32_t _pig_handle;
 
     public:
-        explicit gpio_pin(uint32_t index) : _pin_index{index} {
-
-        }
+        explicit gpio_pin(uint32_t index);
 
         gpio_pin& mode(gpio_mode mode);
 

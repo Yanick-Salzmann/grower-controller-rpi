@@ -104,6 +104,8 @@ namespace grower::ui::text {
 
         static void update_ortho_matrix(const glm::mat4 &matrix);
     };
+
+    typedef std::shared_ptr<text_sprite> text_sprite_ptr;
 }
 
 #endif //GROWER_CONTROLLER_RPI_TEXT_SPRITE_HPP

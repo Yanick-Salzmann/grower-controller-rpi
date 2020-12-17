@@ -10,7 +10,8 @@ namespace grower::ui {
     const std::string ui_manager::default_font_name{"Titillium Web"};
     const std::string ui_manager::font_awesome_name{"Font Awesome 5 Free"};
 
-    void ui_manager::initialize() {
+    void ui_manager::initialize(context_ptr context) {
+        _context = std::move(context);
         _touch_input = std::make_unique<touch_input>();
 
         ui::text::font::load_default_fonts();
@@ -21,10 +22,12 @@ namespace grower::ui {
         _fps_indicator = std::make_shared<text::text_sprite>(default_font_name);
         _fps_indicator->font_size(20);
 
-        _main_view = std::make_shared<views::main_view>();
+        _main_view = std::make_shared<views::main_view>(_context);
         _active_view = _main_view;
 
         _views.push_back(_main_view);
+
+        turn_on_display();
     }
 
     void ui_manager::render() {
@@ -33,7 +36,7 @@ namespace grower::ui {
         } else {
             const auto idle_time = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - _last_input_event).count();
             if (idle_time > 30) {
-                log->info("Display has been idle for more than 30 seconds, going to standby");
+                log->info("Display has been idle for at least 30 seconds, going to standby");
                 turn_off_display();
             }
         }
@@ -59,6 +62,10 @@ namespace grower::ui {
         if (!_is_display_on) {
             log->info("Received touch event, waking up display");
             turn_on_display();
+        }
+
+        if (_active_view) {
+            _active_view->handle_input_message(event);
         }
     }
 
@@ -98,5 +105,9 @@ namespace grower::ui {
         const auto p = popen("vcgencmd display_power 1", "r");
         pclose(p);
         _is_display_on = true;
+    }
+
+    void ui_manager::update_display() {
+        _touch_input->update();
     }
 }

@@ -25,14 +25,6 @@
     <div class="row mt-3">
         <h1>Chili Grower Supervisor</h1>
     </div>
-    <div class="row mt-5 align-items-center">
-        <div class="col-md-2">
-            <i class="fa fa-power-off power-icon power-off" id="psu-switch-icon"></i>
-        </div>
-        <div class="col-md-10 align-items-center">
-            <h3>Power Supply: Off</h3>
-        </div>
-    </div>
     <div class="row mt-5">
         <div class="col-md-2">
             <img src="images/case_fan.svg" alt="Case fan artwork" class="case-fan">
@@ -86,6 +78,57 @@
             </div>
             <div class="row mt-2">
                 <h5>Current RPM:&nbsp;1200</h5>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-2">
+            <i class="fa fa-thermometer-three-quarters row-icon"></i>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-2">
+            <i class="fa fa-bolt row-icon"></i>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-auto power-row">
+                    <i class="fa fa-seedling"></i>
+                    <span>Flower Lamp:&nbsp;</span>
+                    <span id="lamp-power-indicator"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-auto power-row">
+                    <i class="fa fa-microchip"></i>
+                    <span>Raspberry PI:&nbsp;</span>
+                    <span id="rpi-power-indicator"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-auto power-row">
+                    <i class="fa fa-charging-station"></i>
+                    <span>Total:&nbsp;</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5 align-items-center">
+        <div class="col-md-2">
+            <i class="fa fa-lightbulb row-icon"></i>
+        </div>
+        <div class="col-md-3 align-items-center">
+            <div class="custom-control-lg custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="germination-lamp-check">
+                <label class="custom-control-label" for="germination-lamp-check">Germination</label>
+            </div>
+            <div class="custom-control-lg custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="flowering-lamp-check">
+                <label class="custom-control-label" for="flowering-lamp-check">Flowering</label>
+            </div>
+            <div class="custom-control-lg custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="illumination-lamp-check">
+                <label class="custom-control-label" for="illumination-lamp-check">Illumination</label>
             </div>
         </div>
     </div>

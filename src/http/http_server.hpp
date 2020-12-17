@@ -22,8 +22,21 @@ namespace grower::http {
         void get_fan_speed(const httplib::Request& req, httplib::Response& resp);
         void put_fan_speed(const httplib::Request& req, httplib::Response& resp);
 
-        void get_psu_state(const httplib::Request& req, httplib::Response& resp);
-        void put_psu_state(const httplib::Request& req, httplib::Response& resp);
+        void get_flower_current(const httplib::Request& req, httplib::Response& resp);
+        void get_rpi_current(const httplib::Request& req, httplib::Response& resp);
+        void get_total_current(const httplib::Request& req, httplib::Response& resp);
+
+        void get_state_flowering(const httplib::Request& req, httplib::Response& resp);
+        void get_state_germ(const httplib::Request& req, httplib::Response& resp);
+        void get_state_illumination(const httplib::Request& res, httplib::Response& resp);
+
+        void put_state_flowering(const httplib::Request& req, httplib::Response& resp);
+        void put_state_germination(const httplib::Request& req, httplib::Response& resp);
+        void put_state_illumination(const httplib::Request& req, httplib::Response& resp);
+
+        void update_relay_state(peripheral::relay_control_ptr relay, const httplib::Request& req, httplib::Response& resp);
+
+        void update_current(const httplib::Request& req, httplib::Response& resp);
 
         void stop_application(httplib::Response& resp);
 

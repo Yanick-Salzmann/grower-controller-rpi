@@ -6,6 +6,7 @@
 #include "ui/text/text_sprite.hpp"
 #include "ui/camera_frame.hpp"
 #include "ui/elements/color_quad.hpp"
+#include "ui/elements/color_circle.hpp"
 
 namespace grower::ui::gl {
     LOGGER_IMPL(graphics_device_drm);
@@ -94,6 +95,7 @@ namespace grower::ui::gl {
         auto sync = eglCreateSyncKHR(_display, EGL_SYNC_FENCE_KHR, nullptr);
         glFlush();
         eglClientWaitSyncKHR(_display, sync, 0, EGL_FOREVER_KHR);
+        eglDestroySyncKHR(_display, sync);
 
         eglSwapBuffers(_display, _surface);
 
@@ -143,16 +145,19 @@ namespace grower::ui::gl {
         glViewport(0, 0, _width, _height);
         glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDisable(GL_DEPTH_TEST);
 
         texture::init_default_texture();
         text::text_sprite::init_mesh();
         camera_frame::initialize_mesh();
         elements::color_quad::initialize_mesh();
+        elements::color_circle::initialize_mesh();
 
-        const auto ortho = glm::ortho(0.0f, (float) _width, (float) _height, 0.0f, 0.0f, 1.0f);
+        const auto ortho = glm::ortho((float) _width, 0.0f, 0.0f, (float) _height, 0.0f, 1.0f);
         text::text_sprite::update_ortho_matrix(ortho);
         camera_frame::update_ortho_matrix(ortho);
         elements::color_quad::update_ortho_matrix(ortho);
+        elements::color_circle::update_ortho_matrix(ortho);
     }
 
     void graphics_device_drm::load_drm_resources() {

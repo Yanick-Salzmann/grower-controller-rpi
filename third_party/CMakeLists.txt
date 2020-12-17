@@ -6,10 +6,12 @@ include(ExternalProject)
 set(SPDLOG_ROOT ${CMAKE_CURRENT_BINARY_DIR}/spdlog)
 set(HTTP_ROOT ${CMAKE_CURRENT_BINARY_DIR}/cpp-httplib)
 set(JSON_ROOT ${CMAKE_CURRENT_BINARY_DIR}/json)
+set(TOML_ROOT ${CMAKE_CURRENT_BINARY_DIR}/toml)
 
 # https://github.com/gabime/spdlog/archive/v1.8.1.tar.gz
 # https://github.com/yhirose/cpp-httplib/archive/v0.7.8.tar.gz
 # https://github.com/nlohmann/json/archive/v3.9.1.tar.gz
+# https://github.com/ToruNiina/toml11/archive/v3.6.0.tar.gz
 
 ExternalProject_Add(
         spdlog
@@ -39,6 +41,18 @@ ExternalProject_Add(
         INSTALL_DIR ${HTTP_ROOT}
         CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${HTTP_ROOT}
+        -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+        -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+)
+
+ExternalProject_Add(
+        toml
+        PREFIX ${TOML_ROOT}
+        URL https://github.com/ToruNiina/toml11/archive/v3.6.0.tar.gz
+        SOURCE_DIR ${TOML_ROOT}/src/cpp-httplib
+        INSTALL_DIR ${TOML_ROOT}
+        CMAKE_CACHE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=${TOML_ROOT}
         -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
         -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
 )

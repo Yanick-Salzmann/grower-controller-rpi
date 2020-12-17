@@ -37,12 +37,16 @@ namespace grower::ui {
 
         const auto num_read = ts_read_mt(_ts_dev, _sample_buffer, num_slots, num_samples);
         if (num_read > 0) {
+            _has_read_data = true;
             for (auto i = 0; i < num_read; ++i) {
                 process_sample(_sample_buffer[i]);
             }
         } else if (num_read < 0) {
             if (std::abs(num_read) != EAGAIN) {
-                log->warn("Error reading touch screen data: {}", utils::error_to_string(num_read));
+                if(_has_read_data) {
+                    log->warn("Error reading touch screen data: {}", utils::error_to_string(num_read));
+                    _has_read_data = false;
+                }
             }
         }
     }
@@ -66,6 +70,9 @@ namespace grower::ui {
         if (slot >= _slot_states.size()) {
             return;
         }
+
+        x = 1024 - x;
+        y = 600 - y;
 
         auto &state = _slot_states[slot];
         const auto did_move = state.x != x || state.y != y;
